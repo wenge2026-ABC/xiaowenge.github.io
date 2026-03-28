@@ -200,29 +200,51 @@ const db = new Database();
 
 // ===== 初始化 =====
 async function init() {
-  await checkAuth();
-  bindEvents();
-  navigate('home');
-  updateStats();
+  console.log('🔧 开始初始化...');
   
-  // 订阅实时更新
-  db.subscribeToChanges('posts', () => {
-    if (state.currentPage === 'blog' || state.currentPage === 'home') {
-      renderPage(state.currentPage);
-    }
-  });
-  
-  db.subscribeToChanges('photos', () => {
-    if (state.currentPage === 'photos' || state.currentPage === 'home') {
-      renderPage(state.currentPage);
-    }
-  });
-  
-  db.subscribeToChanges('files', () => {
-    if (state.currentPage === 'files' || state.currentPage === 'home') {
-      renderPage(state.currentPage);
-    }
-  });
+  try {
+    console.log('1. 检查认证状态...');
+    await checkAuth();
+    console.log('✅ 认证检查完成');
+    
+    console.log('2. 绑定事件...');
+    bindEvents();
+    console.log('✅ 事件绑定完成');
+    
+    console.log('3. 导航到首页...');
+    navigate('home');
+    console.log('✅ 导航完成');
+    
+    console.log('4. 更新统计...');
+    updateStats();
+    console.log('✅ 统计更新完成');
+    
+    console.log('5. 设置实时订阅...');
+    // 订阅实时更新
+    db.subscribeToChanges('posts', () => {
+      if (state.currentPage === 'blog' || state.currentPage === 'home') {
+        renderPage(state.currentPage);
+      }
+    });
+    
+    db.subscribeToChanges('photos', () => {
+      if (state.currentPage === 'photos' || state.currentPage === 'home') {
+        renderPage(state.currentPage);
+      }
+    });
+    
+    db.subscribeToChanges('files', () => {
+      if (state.currentPage === 'files' || state.currentPage === 'home') {
+        renderPage(state.currentPage);
+      }
+    });
+    console.log('✅ 实时订阅设置完成');
+    
+    console.log('🎉 网站初始化全部完成！');
+  } catch (error) {
+    console.error('❌ 初始化过程出错:', error);
+    alert('初始化失败: ' + error.message);
+  }
 }
 
 // ===== 检查认证状态 =====
@@ -279,14 +301,23 @@ function updateAuthUI() {
 
 // ===== 事件绑定 =====
 function bindEvents() {
-  // 导航
-  $$('.nav-item').forEach(item => {
+  console.log('🎯 开始绑定事件...');
+  
+  // 导航菜单
+  const navItems = $$('.nav-item');
+  console.log(`找到 ${navItems.length} 个导航菜单项`);
+  
+  navItems.forEach((item, index) => {
+    console.log(`绑定第 ${index + 1} 个菜单: ${item.dataset.page}`);
     item.addEventListener('click', e => {
+      console.log(`点击菜单: ${item.dataset.page}`);
       e.preventDefault();
       const page = item.dataset.page;
       navigate(page);
     });
   });
+  
+  console.log('✅ 导航菜单事件绑定完成');
 
   // 移动端菜单
   $('#burger').addEventListener('click', () => {
@@ -1070,4 +1101,14 @@ window.insertHR = () => {
 };
 
 // ===== 启动 =====
-document.addEventListener('DOMContentLoaded', init);
+console.log('🚀 网站开始加载...');
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('📄 DOM 加载完成');
+    try {
+        init();
+        console.log('✅ 网站初始化成功');
+    } catch (error) {
+        console.error('❌ 网站初始化失败:', error);
+        alert('网站初始化失败，请查看控制台获取详细信息');
+    }
+});
